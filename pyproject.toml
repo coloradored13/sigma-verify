@@ -1,0 +1,74 @@
+[build-system]
+requires = ["setuptools>=77.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sigma-verify"
+version = "0.2.0"
+description = "MCP server giving Claude Code agents cross-model verification against OpenAI, Google, and Ollama (local and cloud) models"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "Apache-2.0"
+license-files = ["LICENSE", "NOTICE"]
+authors = [
+    { name = "coloradored13" },
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+dependencies = [
+    "anthropic>=0.40.0",
+    "openai>=1.0.0",
+    "google-genai>=1.0.0",
+    # The server entry point needs both, so they are core dependencies.
+    "mcp>=1.0",
+    "hateoas-agent @ git+https://github.com/coloradored13/hateoas-agent@v0.3.0",
+]
+
+[project.optional-dependencies]
+# Kept as an empty alias so existing `sigma-verify[mcp]` installs keep resolving.
+mcp = []
+dev = [
+    "pytest",
+    "pytest-cov",
+    "pytest-asyncio",
+    "ruff",
+]
+
+[project.urls]
+Homepage = "https://github.com/coloradored13/sigma-verify"
+Repository = "https://github.com/coloradored13/sigma-verify"
+Issues = "https://github.com/coloradored13/sigma-verify/issues"
+
+[project.scripts]
+sigma-verify = "sigma_verify.server:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+# Explicit rule selection keeps lint results stable across ruff releases and
+# consistent with the sibling projects (hateoas-agent, sigma-mem).
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--cov=sigma_verify --cov-report=term-missing"
+
+[tool.coverage.run]
+source = ["sigma_verify"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+skip_empty = true
